@@ -3,6 +3,7 @@ sandbox*.py
 
 # Data for TensorFlow
 data/
+input/
 inception/
 vgg16/
 checkpoints/
