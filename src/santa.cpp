@@ -12,13 +12,13 @@ const int WISH_SIZE = 100;
 const int PREF_SIZE = 1000;
 const int NUM_TRIP = 1667;
 const int NUM_TWIN = 20000;
-const int NUM_MINUTE = 2;
+const int NUM_MINUTE = 55;
 
 class SantaGifts{
     const LD score_factor = 2.0;
     const int triplet_lim = 5001;
     const int twin_lim = 45001;
-    const int roll_lim = 100;
+    const int roll_lim = 200;
     vector<unordered_map<int, LD>> wish_score;
     vector<unordered_map<int, LD>> gift_score;
     
@@ -302,13 +302,18 @@ public:
         while(!roll_success){
             while(tar_gidx == src_gidx) tar_gidx = rand()%NUM_GIFT;
             int roll_count = 0;
+            set<int> record;
             while(roll_count < roll_lim && (int)tar_chld_pos.size() < n_swap){
                 int tmp_idx = rand()%GIFT_LIMT;
-                if(assignment[tar_gidx][tmp_idx] >= twin_lim) tar_chld_pos.push_back(tmp_idx);
+                if(assignment[tar_gidx][tmp_idx] >= twin_lim && !record.count(tmp_idx)){
+                    tar_chld_pos.push_back(tmp_idx);
+                    record.insert(tmp_idx);
+                }
                 ++roll_count;
             }
             if(roll_count == roll_lim){
                 tar_gidx = rand()%NUM_GIFT;
+                tar_chld_pos.clear();
             }
             else break;
         }
@@ -370,26 +375,33 @@ public:
         return;
     }
     
-    void outPutCSV(){
-        ofstream fout;
-        cout<<"WRITING TO A CSV FILE!"<<endl;
-        fout.open ("output.csv");
-        fout<<"ChildId,GiftId"<<endl;
-        for(int i=0;i<NUM_CHLD;++i){
-            fout<<i<<','<<optimal[i];
-            if(i<NUM_CHLD-1) fout<<endl;
-        }
-        fout.close();
+    vector<int> getResult(){
+        return this->optimal;
     }
 };
 
 int main(){
     char wfname[] = "../input/child_wishlist_v2.csv";
     char gfname[] = "../input/gift_goodkids_v2.csv";
-    SantaGifts santa_gift(wfname, gfname);
-    santa_gift.init();
-    santa_gift.evolution();
-    santa_gift.outPutCSV();
+    auto *santa_gift = new SantaGifts(wfname, gfname);
+    santa_gift->init();
+    santa_gift->evolution();
+    auto ans = santa_gift->getResult();
+    delete santa_gift;
+    cout<<"WRITE INTO CSV FILE"<<endl;
+    ofstream fout;
+    fout.open ("output.csv");
+    fout<<"ChildId,GiftId"<<endl;
+    for(int i=0;i<NUM_CHLD;++i){
+        fout<<i<<','<<ans[i];
+        if(i<NUM_CHLD-1) fout<<endl;
+    }
+    fout.close();
     return 0;
 }
+""")
+f.close()
+
+os.system('g++ -std=c++11 -O3 test.cpp -o test')
+os.system('./test')
 
