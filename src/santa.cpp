@@ -12,7 +12,7 @@ const int WISH_SIZE = 100;
 const int PREF_SIZE = 1000;
 const int NUM_TRIP = 1667;
 const int NUM_TWIN = 20000;
-const int NUM_MINUTE = 55;
+const int NUM_MINUTE = 3;
 
 class SantaGifts{
     const LD score_factor = 2.0;
@@ -275,6 +275,41 @@ public:
         cout << "SUCCESS!" <<endl;
     }
     
+    void restart(char* fname){
+        // Initialize picks
+        string info;
+        ifstream fin;
+        clock_t start_time, end_time;
+        cout<<"RESTARTING FROM AN EXISTING PROGRESS!"<<endl;
+        cout<<"LOADING ASSIGNMENT FROM A CSV FILE!" <<endl;
+        start_time = clock();
+        sum_ch = sum_sh = 0.;
+        picks.resize(NUM_CHLD);
+        assignment.resize(NUM_GIFT);
+        fin.open(fname);
+        getline(fin, info);
+        for(int cidx=0;cidx<NUM_CHLD;++cidx){
+            assert(getline(fin, info));
+            assert(cidx == stoi(info));
+            auto j = info.find(',') + 1;
+            int gidx = stoi(info.substr(j));
+            assert(gidx < NUM_GIFT);
+            picks[cidx] = gidx;
+            assignment[gidx].push_back(cidx);
+            sum_ch += getChildWishScore(cidx, gidx);
+            sum_sh += getSantaGiftScore(cidx, gidx);
+        }
+        res = current = powl(sum_ch/NUM_CHLD, 3) + powl(sum_sh/NUM_CHLD, 3);
+        optimal = picks;
+        cout<<"WISH_SCORE = "<<sum_ch/NUM_CHLD << ";  GIFT_SCORE = "<<sum_sh/NUM_CHLD<<endl;
+        cout<<"INITAL_SCORE = "<< res <<endl;
+        end_time = clock();
+        cout << "INITIALIZATION TIME USAGE: "<<LD(end_time - start_time)/CLOCKS_PER_SEC << " s"<<endl;
+        cout << "VERIFY ASSIGNMENT: ";
+        for(auto vec: assignment) assert((int)vec.size() == GIFT_LIMT);
+        cout << "SUCCESS!" <<endl;
+    }
+    
     int oneStepEvolve(){
         int src_gidx = rand()%NUM_GIFT;
         int tar_gidx = rand()%NUM_GIFT;
@@ -378,14 +413,40 @@ public:
     vector<int> getResult(){
         return this->optimal;
     }
+    
+    void judgeCorrect(){
+        unordered_map<int, int> gift_count;
+        cout<<"CHECKING CORRECTNESS: "<<endl;
+        for(int i=0;i<triplet_lim;i+=3){
+            assert(optimal[i] == optimal[i+1]);
+            assert(optimal[i] == optimal[i+2]);
+            gift_count[optimal[i]] += 3;
+        }
+        for(int i=triplet_lim;i<twin_lim;i+=2){
+            assert(optimal[i] == optimal[i+1]);
+            gift_count[optimal[i]] += 2;
+        }
+        for(int i=twin_lim;i<NUM_CHLD;++i){
+            gift_count[optimal[i]]++;
+        }
+        for(auto p:gift_count) assert(p.second == GIFT_LIMT);
+        cout << "THE INPUT/INITIALIZATION IS CORRECT!" <<endl;
+    }
 };
 
-int main(){
+int main(int argc, char *argv[]){
     char wfname[] = "../input/child_wishlist_v2.csv";
     char gfname[] = "../input/gift_goodkids_v2.csv";
     auto *santa_gift = new SantaGifts(wfname, gfname);
-    santa_gift->init();
+    if(argc <= 1) santa_gift->init();
+    else santa_gift->restart(argv[1]);
+    
+    // Check correctness
+    santa_gift->judgeCorrect();
     santa_gift->evolution();
+    
+    // Check correctness
+    santa_gift->judgeCorrect();
     auto ans = santa_gift->getResult();
     delete santa_gift;
     cout<<"WRITE INTO CSV FILE"<<endl;
@@ -399,9 +460,3 @@ int main(){
     fout.close();
     return 0;
 }
-""")
-f.close()
-
-os.system('g++ -std=c++11 -O3 test.cpp -o test')
-os.system('./test')
-
