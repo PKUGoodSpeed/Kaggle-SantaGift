@@ -50,7 +50,7 @@ class SantaGifts{
     }
     // Judge whether to swap or not
     bool needSwap(const LD& o, const LD& f){
-        return f > o;
+        return f >= o;
     }
 public:
     SantaGifts(char *wishfile, char *preffile){
