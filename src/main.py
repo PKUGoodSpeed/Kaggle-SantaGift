@@ -102,8 +102,8 @@ def main_loop():
     for i in range(20):
         print "=================  Iteration #{0}  =================".format(str(i))
         child_blocks = np.split(np.random.permutation(range(TWINS, N_CHILDREN)), N_BLOCKS)
-        pbar.setBar(200)
         print "OPTIMIZING..."
+        pbar.setBar(200)
         for j in range(200):
             pbar.show(j)
             child_block = child_blocks[j]
