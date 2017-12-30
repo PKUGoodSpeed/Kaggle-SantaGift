@@ -63,8 +63,8 @@ def my_avg_normalized_happiness(pred):
     pbar.setBar(len(pred))
     for i, [c,g] in enumerate(pred):
         pbar.show(i)
-        total_child_happiness +=  -CHILD_HAPPINESS[c][g]
-        total_gift_happiness[g] += -GIFT_HAPPINESS[g][c]
+        total_child_happiness +=  CHILD_HAPPINESS[c][g]
+        total_gift_happiness[g] += GIFT_HAPPINESS[g][c]
     nch = total_child_happiness / N_CHILDREN
     ngh = np.mean(total_gift_happiness) / 1000
     print('normalized child happiness', nch)
@@ -116,7 +116,7 @@ def main_loop():
     subm[['ChildId', 'GiftId']].to_csv('twtr.csv', index=False)
 
 ## Define number of total iterations:
-NUM_ITERATION = 10
+NUM_ITERATION = 2
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
