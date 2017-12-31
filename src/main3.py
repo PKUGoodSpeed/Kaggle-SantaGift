@@ -24,9 +24,9 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 300
-TRIPLET_BLOCK_SIZE = 400
-TWIN_BLOCK_SIZE = 200
+SINGLE_BLOCK_SIZE = 500
+TRIPLET_BLOCK_SIZE = 600
+TWIN_BLOCK_SIZE = 500
 
 ## Default data source path
 INITIAL_SUBMISSION = './twtr.csv'
@@ -242,10 +242,10 @@ def optimize_3111(picks):
     for step in range(5):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 300
+        bsize = 600
         shuffle = np.random.permutation(range(0, len(group_gift)))
     
-        for j in range(10):
+        for j in range(5):
             child_block = shuffle[j*bsize: (j+1)*bsize]
             gift_block = group_gift[child_block]
             cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
@@ -295,7 +295,7 @@ def optimize_211(picks):
     for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 400
+        bsize = 600
         shuffle = np.random.permutation(range(0, len(group_gift)))
     
         for j in range(10):
@@ -360,10 +360,10 @@ def optimize_321(picks):
     for step in range(5):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 200
+        bsize = 600
         shuffle = np.random.permutation(range(0, len(group_gift)))
     
-        for j in range(10):
+        for j in range(5):
             child_block = shuffle[j*bsize: (j+1)*bsize]
             gift_block = group_gift[child_block]
             cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
@@ -504,7 +504,7 @@ def checkCorrectNess(picks):
 
 
 ## Define number of total iterations:
-NUM_ITERATION = 20
+NUM_ITERATION = 3
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))

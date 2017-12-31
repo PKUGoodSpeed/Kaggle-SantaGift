@@ -312,6 +312,7 @@ public:
     
     int oneStepEvolve(){
         int k = rand()%twin_lim;
+        //int k = rand()%triplet_lim;
         /*
         int k = assignment[494][rand()%GIFT_LIMT];
         while(k >= twin_lim){
