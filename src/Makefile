@@ -8,3 +8,6 @@ twtr: twtr.cpp
 
 impr: impr.cpp
 	g++ -std=c++11 -Wall -O3 impr.cpp -o apps/impr
+	
+clean:
+	rm apps/*
