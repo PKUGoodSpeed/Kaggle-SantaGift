@@ -202,7 +202,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(8):
+    for step in range(15):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         pbar.setBar(200)
@@ -225,7 +225,7 @@ def main_loop():
     # Twin Optimization:
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
-    for step in range(15):
+    for step in range(60):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
         for j in range(5):
@@ -245,7 +245,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     triplet_idx = tri_df['GiftId'].values
-    for step in range(6):
+    for step in range(20):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TRIPLET))
         for j in range(2):
@@ -278,7 +278,7 @@ def main_loop():
     output[['ChildId', 'GiftId']].to_csv('twtr.csv', index=False)
 
 ## Define number of total iterations:
-NUM_ITERATION = 4
+NUM_ITERATION = 10
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
