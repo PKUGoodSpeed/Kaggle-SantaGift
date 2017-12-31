@@ -278,7 +278,7 @@ def main_loop():
     output[['ChildId', 'GiftId']].to_csv('twtr.csv', index=False)
 
 ## Define number of total iterations:
-NUM_ITERATION = 2
+NUM_ITERATION = 5
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
