@@ -133,6 +133,23 @@ def tri_happiness(pred):
     print('triplet gift happiness', gh)
     return gh, ch
     
+'''
+==========================
+COMPUTE HAPPINESS FOR ALL CHILDREN
+'''
+def get_total_happiness(vec):
+    gh = 0.
+    ch = 0.
+    print("COMPUTE TOTAL HAPPINESS...")
+    pbar.setBar(len(vec))
+    for c,g in enumerate(vec):
+        pbar.show(c)
+        gh += GIFT_HAPPINESS[g][c]
+        ch += CHILD_HAPPINESS[c][g]
+    print('total child happiness', ch)
+    print('total gift happiness', gh)
+    return gh, ch
+    
 
 '''
 ==========================
@@ -171,6 +188,199 @@ def optimize_triplet_block(child_block, gift_block, gh, ch):
             C[i, j] = -1.*entropy(gh, ch, TRIPLET_GIFT_HAPPINESS[c][g], TRIPLET_CHILD_HAPPINESS[c][g])
     row_ind, col_ind = linear_sum_assignment(C)
     return child_block[row_ind], gift_block[col_ind]
+
+'''
+==========================
+OPTIMIZATION FOR SWAPPING CASES
+''' 
+def optimize_swap_block(child_block, gift_block, gh, ch, id_map):
+    block_size = int(len(child_block))
+    C = np.zeros((block_size, block_size))
+    for i,group_id in enumerate(child_block):
+        for j, g in enumerate(gift_block):
+            sgh = 0.
+            sch = 0.
+            for c in id_map[group_id]:
+                sgh += GIFT_HAPPINESS[g][c]
+                sch += CHILD_HAPPINESS[c][g]
+            C[i, j] = -1.* entropy(gh, ch, sgh, sch)
+    row_ind, col_ind = linear_sum_assignment(C)
+    return (child_block[row_ind], gift_block[col_ind])
+    
+'''
+==========================
+LOOP TO OPTIMIZE 3 = 1 + 1 + 1 cases
+'''
+def optimize_3111(picks):
+    print "BEGIN 3 = 1+1+1 OPTIMIZATION..."
+    print "GET SINGLE POOL..."
+    SINGLE_POOL = [[] for i in range(N_GIFT_TYPE)]
+    for c in range(TWINS, N_CHILDREN):
+        SINGLE_POOL[picks[c]].append(c)
+        
+    print "GROUP CHILDREN..."
+    id_map = []
+    group_gift = []
+    for i in range(N_TRIPLET):
+        id_map.append([i*3, i*3+1, i*3+2])
+        group_gift.append(picks[i*3])
+    for g in range(N_GIFT_TYPE):
+        n_p = int(min(4, len(SINGLE_POOL[g])/3))
+        idx = np.random.permutation(range(0, len(SINGLE_POOL[g])))
+        for j in range(n_p):
+            group_gift.append(g)
+            id_map.append([SINGLE_POOL[g][idx[j*3]], SINGLE_POOL[g][idx[j*3+1]], SINGLE_POOL[g][idx[j*3+2]]])
+    group_gift = np.array(group_gift)
+    print "shaocong 3111"
+    for i, g in enumerate(group_gift):
+        assert g == picks[id_map[i][0]] == picks[id_map[i][1]] == picks[id_map[i][2]]
+    
+    gh, ch = get_total_happiness(picks)
+    score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+    print "SCORE BEFORE 3 = 1+1+1 OPTIMIZATION: ", score
+    
+    for step in range(5):
+        print "=================  Iteration #{0}  =================".format(str(step))
+        
+        bsize = 300
+        shuffle = np.random.permutation(range(0, len(group_gift)))
+    
+        for j in range(10):
+            child_block = shuffle[j*bsize: (j+1)*bsize]
+            gift_block = group_gift[child_block]
+            cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
+            group_gift[cids] = gids
+        for k,g in enumerate(group_gift):
+            for c in id_map[k]:
+                picks[c] = g
+        gh, ch = get_total_happiness(picks)
+        score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+        print "SCORE = {0}, GIFT HAPPINESS = {1}, CHILD HAPPINESS = {2}".format(
+            str(score), str(gh), str(ch))
+    return picks
+
+
+'''
+==========================
+LOOP TO OPTIMIZE 2 = 1 + 1 cases
+'''
+def optimize_211(picks):
+    print "BEGIN 2 = 1+1 OPTIMIZATION..."
+    print "GET SINGLE POOL..."
+    SINGLE_POOL = [[] for i in range(N_GIFT_TYPE)]
+    for c in range(TWINS, N_CHILDREN):
+        SINGLE_POOL[picks[c]].append(c)
+        
+    print "GROUP CHILDREN..."
+    id_map = []
+    group_gift = []
+    for c in range(TRIPLETS, TWINS, 2):
+        id_map.append([c, c+1])
+        group_gift.append(picks[c])
+    for g in range(N_GIFT_TYPE):
+        n_p = int(min(20, len(SINGLE_POOL[g])/2))
+        idx = np.random.permutation(range(0, len(SINGLE_POOL[g])))
+        for j in range(n_p):
+            group_gift.append(g)
+            id_map.append([SINGLE_POOL[g][idx[j*2]], SINGLE_POOL[g][idx[j*2+1]]])
+    group_gift = np.array(group_gift)
+    print "shaocong 211"
+    for i, g in enumerate(group_gift):
+        assert g == picks[id_map[i][0]] == picks[id_map[i][1]]
+    
+    gh, ch = get_total_happiness(picks)
+    score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+    print "SCORE BEFORE 2 = 1+1 OPTIMIZATION: ", score
+    
+    for step in range(10):
+        print "=================  Iteration #{0}  =================".format(str(step))
+        
+        bsize = 400
+        shuffle = np.random.permutation(range(0, len(group_gift)))
+    
+        for j in range(10):
+            child_block = shuffle[j*bsize: (j+1)*bsize]
+            gift_block = group_gift[child_block]
+            cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
+            group_gift[cids] = gids
+        for k,g in enumerate(group_gift):
+            for c in id_map[k]:
+                picks[c] = g
+        gh, ch = get_total_happiness(picks)
+        score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+        print "SCORE = {0}, GIFT HAPPINESS = {1}, CHILD HAPPINESS = {2}".format(
+            str(score), str(gh), str(ch))
+    return picks
+    
+'''
+==========================
+LOOP TO OPTIMIZE 3 = 2 + 1 cases
+'''
+def optimize_321(picks):
+    print "BEGIN 3 = 2+1 OPTIMIZATION..."
+    print "GET SINGLE POOL..."
+    SINGLE_POOL = [[] for i in range(N_GIFT_TYPE)]
+    for c in range(TWINS, N_CHILDREN):
+        SINGLE_POOL[picks[c]].append(c)
+        
+    print "GET TWIN POOL..."
+    TWIN_POOL = [[] for i in range(N_GIFT_TYPE)]
+    for i in range(N_TWIN):
+        c = TRIPLETS + i*2
+        assert picks[c] == picks[c+1]
+        TWIN_POOL[picks[c]].append(c)
+        
+        
+    print "GROUP CHILDREN..."
+    id_map = []
+    group_gift = []
+    for i in range(N_TRIPLET):
+        id_map.append([i*3, i*3+1, i*3+2])
+        group_gift.append(picks[i*3])
+    for g in range(N_GIFT_TYPE):
+        n_p = int(min(3, len(SINGLE_POOL[g]), len(TWIN_POOL[g])))
+        idx = np.random.permutation(range(0, len(SINGLE_POOL[g])))
+        idx2 = np.random.permutation(range(0, len(TWIN_POOL[g])))
+        for j in range(n_p):
+            group_gift.append(g)
+            c1 = SINGLE_POOL[g][idx[j]]
+            c2 = TWIN_POOL[g][idx2[j]]
+            c3 = c2 + 1
+            assert picks[c1] == picks[c2] == picks[c3] == g
+            id_map.append([c1, c2, c3])
+    group_gift = np.array(group_gift)
+    print "shaocong 321"
+    for i, g in enumerate(group_gift):
+        assert g == picks[id_map[i][0]] == picks[id_map[i][1]]
+    
+    gh, ch = get_total_happiness(picks)
+    score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+    print "SCORE BEFORE 2 = 1+1 OPTIMIZATION: ", score
+    
+    for step in range(5):
+        print "=================  Iteration #{0}  =================".format(str(step))
+        
+        bsize = 200
+        shuffle = np.random.permutation(range(0, len(group_gift)))
+    
+        for j in range(10):
+            child_block = shuffle[j*bsize: (j+1)*bsize]
+            gift_block = group_gift[child_block]
+            cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
+            group_gift[cids] = gids
+        for k,g in enumerate(group_gift):
+            for c in id_map[k]:
+                picks[c] = g
+        gh, ch = get_total_happiness(picks)
+        score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
+        print "SCORE = {0}, GIFT HAPPINESS = {1}, CHILD HAPPINESS = {2}".format(
+            str(score), str(gh), str(ch))
+    return picks
+    
+
+    
+
+
     
 def main_loop():
     ## Restart from the existing progress
@@ -202,7 +412,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(10):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         pbar.setBar(200)
@@ -225,7 +435,7 @@ def main_loop():
     # Twin Optimization:
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
-    for step in range(50):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
         for j in range(5):
@@ -245,7 +455,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     triplet_idx = tri_df['GiftId'].values
-    for step in range(20):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TRIPLET))
         for j in range(2):
@@ -269,13 +479,29 @@ def main_loop():
     for g in twin_df.GiftId.tolist():
         twin_list += [g]*2
     single_list = subm.GiftId.tolist()[TWINS: ]
-    dic = {}
-    dic['ChildId'] = [i for i in range(N_CHILDREN)]
-    dic['GiftId'] = triplet_list + twin_list + single_list
-    output = pd.DataFrame(dic)
     
-    print "WRITING BACK TO THE CSV FILE..."
-    output[['ChildId', 'GiftId']].to_csv('twtr.csv', index=False)
+    picks = np.array(triplet_list + twin_list + single_list)
+    return picks
+
+'''
+==========================
+CHECK CORRECTNESS
+'''
+def checkCorrectNess(picks):
+    print "CHECKING CORRECTNESS..."
+    for i in range(N_TRIPLET):
+        assert picks[3*i] == picks[3*i+1] == picks[3*i+2]
+        
+    for j in range(TRIPLETS, TWINS, 2):
+        assert picks[j] == picks[j+1]
+    
+    cnt = np.zeros(N_GIFT_TYPE)
+    for c,g in enumerate(picks):
+        cnt[g] += 1
+    for cn in cnt:
+        assert cn == 1000
+    print "CURRENT PAIRING IS CORRECT!"
+
 
 ## Define number of total iterations:
 NUM_ITERATION = 1
@@ -283,12 +509,28 @@ if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
         print "CPP OPTIMIZATION ON SINGLE CHILDREN..."
-        os.system('./apps/twtr ./twtr.csv')
+        #os.system('./apps/twtr ./twtr.csv')
         print "CPP OPTIMIZATION FINISHED"
         
         print "PYTHON OPTIMIZATION ON TWINS AND TRIPLETS..."
-        main_loop()
+        #main_loop()
+        picks = main_loop()
+        checkCorrectNess(picks)
+        picks = optimize_3111(picks)
+        checkCorrectNess(picks)
+        picks = optimize_211(picks)
+        checkCorrectNess(picks)
+        picks = optimize_321(picks)
+        checkCorrectNess(picks)
+        
         print "PYTHON OPTIMIZATION FINISHED"
-        print "\n"
+        
+        dic = {}
+        dic['ChildId'] = [i for i in range(N_CHILDREN)]
+        dic['GiftId'] = list(picks)
+        output = pd.DataFrame(dic)
+    
+        print "WRITING BACK TO THE CSV FILE..."
+        output[['ChildId', 'GiftId']].to_csv('test.csv', index=False)
         
     

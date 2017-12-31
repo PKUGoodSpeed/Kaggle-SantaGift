@@ -12,7 +12,7 @@ const int WISH_SIZE = 100;
 const int PREF_SIZE = 1000;
 const int NUM_TRIP = 1667;
 const int NUM_TWIN = 20000;
-const int NUM_MINUTE = 45;
+const int NUM_MINUTE = 10;
 
 class SantaGifts{
     const LD score_factor = 2.0;
@@ -312,7 +312,11 @@ public:
     
     int oneStepEvolve(){
         int k = rand()%twin_lim;
-        assert(k < twin_lim);
+        /*
+        int k = assignment[494][rand()%GIFT_LIMT];
+        while(k >= twin_lim){
+            k = assignment[494][rand()%GIFT_LIMT];
+        }*/
         int src_gidx = picks[k];
         int tar_gidx = rand()%NUM_GIFT;
         int n_swap = 1;
