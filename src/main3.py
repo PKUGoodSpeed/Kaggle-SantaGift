@@ -412,7 +412,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(0):
+    for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         pbar.setBar(200)
@@ -435,7 +435,7 @@ def main_loop():
     # Twin Optimization:
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
-    for step in range(0):
+    for step in range(50):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
         for j in range(5):
@@ -455,7 +455,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     triplet_idx = tri_df['GiftId'].values
-    for step in range(0):
+    for step in range(20):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TRIPLET))
         for j in range(2):
@@ -508,12 +508,11 @@ NUM_ITERATION = 1
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
-        print "CPP OPTIMIZATION ON SINGLE CHILDREN..."
-        #os.system('./apps/twtr ./twtr.csv')
+        print "CPP OPTIMIZATION..."
+        os.system('./apps/twtr ./twtr.csv')
         print "CPP OPTIMIZATION FINISHED"
         
-        print "PYTHON OPTIMIZATION ON TWINS AND TRIPLETS..."
-        #main_loop()
+        print "PYTHON OPTIMIZATION..."
         picks = main_loop()
         checkCorrectNess(picks)
         picks = optimize_3111(picks)
@@ -531,6 +530,6 @@ if __name__ == '__main__':
         output = pd.DataFrame(dic)
     
         print "WRITING BACK TO THE CSV FILE..."
-        output[['ChildId', 'GiftId']].to_csv('test.csv', index=False)
+        output[['ChildId', 'GiftId']].to_csv('twtr.csv', index=False)
         
     
