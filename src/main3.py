@@ -412,7 +412,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(10):
+    for step in range(15):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         pbar.setBar(200)
@@ -504,7 +504,7 @@ def checkCorrectNess(picks):
 
 
 ## Define number of total iterations:
-NUM_ITERATION = 1
+NUM_ITERATION = 20
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
