@@ -21,7 +21,7 @@ class SantaGifts{
     const int roll_lim = 200;
     vector<unordered_map<int, LD>> wish_score;
     vector<unordered_map<int, LD>> gift_score;
-    
+    vector<unordered_map<int, int>> child_pos;
     LD res, current;
     LD sum_ch, sum_sh;
     vector<int> picks;
@@ -263,8 +263,11 @@ public:
         res = current = powl(sum_ch/NUM_CHLD, 3) + powl(sum_sh/NUM_CHLD, 3);
         optimal = picks;
         assignment.resize(NUM_GIFT);
+        child_pos.resize(NUM_GIFT);
         for(int childIdx=0;childIdx<NUM_CHLD;++childIdx){
-            assignment[optimal[childIdx]].push_back(childIdx);
+            int g = optimal[childIdx];
+            assignment[g].push_back(childIdx);
+            child_pos[g][childIdx] = (int)assignment[g].size() - 1;
         }
         cout<<"WISH_SCORE = "<<sum_ch/NUM_CHLD << ";  GIFT_SCORE = "<<sum_sh/NUM_CHLD<<endl;
         cout<<"INITAL_SCORE = "<< res <<endl;
@@ -286,6 +289,7 @@ public:
         sum_ch = sum_sh = 0.;
         picks.resize(NUM_CHLD);
         assignment.resize(NUM_GIFT);
+        child_pos.resize(NUM_GIFT);
         fin.open(fname);
         getline(fin, info);
         for(int cidx=0;cidx<NUM_CHLD;++cidx){
@@ -296,6 +300,7 @@ public:
             assert(gidx < NUM_GIFT);
             picks[cidx] = gidx;
             assignment[gidx].push_back(cidx);
+            child_pos[gidx][cidx] = (int)assignment[gidx].size() - 1;
             sum_ch += getChildWishScore(cidx, gidx);
             sum_sh += getSantaGiftScore(cidx, gidx);
         }
@@ -320,14 +325,14 @@ public:
         if(k < triplet_lim){
             n_swap = 3;
             for(int q=0;q<3;++q){
-                int tmp_idx = findIdx(assignment[src_gidx], (k/3)*3 + q);
+                int tmp_idx = child_pos[src_gidx][(k/3)*3 + q];
                 src_chld_pos.push_back(tmp_idx);
             }
         }
         else{
             n_swap = 2;
             for(int q=1;q<=2;++q){
-                int tmp_idx = findIdx(assignment[src_gidx], ((k-1)/2)*2 + q);
+                int tmp_idx = child_pos[src_gidx][((k-1)/2)*2 + q];
                 src_chld_pos.push_back(tmp_idx);
             }
         }
@@ -373,6 +378,10 @@ public:
                 picks[tar_cidx] = src_gidx;
                 assignment[src_gidx][src_chld_pos[i]] = tar_cidx;
                 assignment[tar_gidx][tar_chld_pos[i]] = src_cidx;
+                child_pos[src_gidx].erase(src_cidx);
+                child_pos[tar_gidx].erase(tar_cidx);
+                child_pos[src_gidx][tar_cidx] = src_chld_pos[i];
+                child_pos[tar_gidx][src_cidx] = tar_chld_pos[i];
             }
             current = final_score;
             sum_ch += wish_diff;
