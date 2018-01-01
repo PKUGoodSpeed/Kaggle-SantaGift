@@ -24,9 +24,9 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 500
-TRIPLET_BLOCK_SIZE = 600
-TWIN_BLOCK_SIZE = 500
+SINGLE_BLOCK_SIZE = 1000
+TRIPLET_BLOCK_SIZE = 555
+TWIN_BLOCK_SIZE = 400
 
 ## Default data source path
 INITIAL_SUBMISSION = './twtr.csv'
@@ -239,13 +239,13 @@ def optimize_3111(picks):
     score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
     print "SCORE BEFORE 3 = 1+1+1 OPTIMIZATION: ", score
     
-    for step in range(5):
+    for step in range(4):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 600
+        bsize = int(len(group_gift)/8)
         shuffle = np.random.permutation(range(0, len(group_gift)))
     
-        for j in range(5):
+        for j in range(8):
             child_block = shuffle[j*bsize: (j+1)*bsize]
             gift_block = group_gift[child_block]
             cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
@@ -295,10 +295,12 @@ def optimize_211(picks):
     for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 600
+        bsize = int(len(group_gift)/100)
         shuffle = np.random.permutation(range(0, len(group_gift)))
-    
-        for j in range(10):
+        
+        pbar.setBar(100)
+        for j in range(100):
+            pbar.show(j)
             child_block = shuffle[j*bsize: (j+1)*bsize]
             gift_block = group_gift[child_block]
             cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
@@ -357,13 +359,13 @@ def optimize_321(picks):
     score = (gh/N_CHILDREN)**3. + (ch/N_CHILDREN)**3.
     print "SCORE BEFORE 2 = 1+1 OPTIMIZATION: ", score
     
-    for step in range(5):
+    for step in range(4):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = 600
+        bsize = int(len(group_gift)/6)
         shuffle = np.random.permutation(range(0, len(group_gift)))
     
-        for j in range(5):
+        for j in range(6):
             child_block = shuffle[j*bsize: (j+1)*bsize]
             gift_block = group_gift[child_block]
             cids, gids = optimize_swap_block(child_block, gift_block, gh=gh, ch=ch, id_map=id_map)
@@ -435,10 +437,12 @@ def main_loop():
     # Twin Optimization:
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
-    for step in range(50):
+    for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
-        for j in range(5):
+        pbar.setBar(50)
+        for j in range(50):
+            pbar.show(j)
             child_block = perms[j*TWIN_BLOCK_SIZE: (j+1)*TWIN_BLOCK_SIZE]
             gift_block = twin_idx[child_block]
             cids, gids = optimize_twin_block(child_block, gift_block, gh=gh, ch=ch)
@@ -455,10 +459,10 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     triplet_idx = tri_df['GiftId'].values
-    for step in range(20):
+    for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TRIPLET))
-        for j in range(2):
+        for j in range(3):
             child_block = perms[j*TRIPLET_BLOCK_SIZE: (j+1)*TRIPLET_BLOCK_SIZE]
             gift_block = triplet_idx[child_block]
             cids, gids = optimize_triplet_block(child_block, gift_block, gh=gh, ch=ch)
