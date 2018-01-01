@@ -12,7 +12,7 @@ const int WISH_SIZE = 100;
 const int PREF_SIZE = 1000;
 const int NUM_TRIP = 1667;
 const int NUM_TWIN = 20000;
-const int NUM_MINUTE = 30;
+const int NUM_MINUTE = 120;
 
 class SantaGifts{
     const LD score_factor = 2.0;
