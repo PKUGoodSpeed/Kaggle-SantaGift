@@ -24,7 +24,7 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 1000
+SINGLE_BLOCK_SIZE = 500
 TRIPLET_BLOCK_SIZE = 555
 TWIN_BLOCK_SIZE = 400
 
@@ -417,8 +417,8 @@ def main_loop():
     for step in range(15):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
-        pbar.setBar(200)
-        for j in range(200):
+        pbar.setBar(400)
+        for j in range(400):
             pbar.show(j)
             child_block = perms[j*SINGLE_BLOCK_SIZE: (j+1)*SINGLE_BLOCK_SIZE]
             gift_block = single_idx[child_block]
@@ -508,12 +508,12 @@ def checkCorrectNess(picks):
 
 
 ## Define number of total iterations:
-NUM_ITERATION = 3
+NUM_ITERATION = 2
 if __name__ == '__main__':
     for step in range(NUM_ITERATION):
         print "$$$$$$$$$$$$$$$$$ STEP #{0} START $$$$$$$$$$$$$$$$$".format(str(step+1))
         print "CPP OPTIMIZATION..."
-        os.system('./apps/twtr ./twtr.csv')
+        ## os.system('./apps/twtr ./twtr.csv')
         print "CPP OPTIMIZATION FINISHED"
         
         print "PYTHON OPTIMIZATION..."
