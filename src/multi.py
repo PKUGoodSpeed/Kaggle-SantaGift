@@ -30,7 +30,7 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 800
+SINGLE_BLOCK_SIZE = 500
 TRIPLET_BLOCK_SIZE = 250
 TWIN_BLOCK_SIZE = 400
 
@@ -163,7 +163,7 @@ OPTIMIZATION FOR ALL THREE TYPES OF CHILDREN
 ''' 
 ### Define a new entropy term
 def entropy(gh, ch, g, c):
-    return 3.*gh*g*(g + gh) + g**3 + 3.*ch*c*(c + ch) + c**3
+    return gh**2.*g + ch**2*c
 
 ### Optimize the total entropy for the singel children
 def optimize_single_block(child_block, gift_block, gh, ch):
@@ -316,9 +316,9 @@ def optimize_211(picks):
     for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         
-        bsize = int(len(group_gift)/90)
+        bsize = int(len(group_gift)/120)
         shuffle = np.random.permutation(range(0, len(group_gift)))
-        c_blocks = [shuffle[j*bsize: (j+1)*bsize] for j in range(90)]
+        c_blocks = [shuffle[j*bsize: (j+1)*bsize] for j in range(120)]
         args = [(child_block, group_gift[child_block], gh, ch, id_map) for child_block in c_blocks]
         rslts = pool.map(wrapper_swap, args)
         for cids, gids in rslts:
@@ -432,7 +432,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(2):
+    for step in range(12):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         
@@ -484,13 +484,11 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     # triplet_idx = tri_df['GiftId'].values
-    for step in range(1):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
-        perms = np.random.permutation(range(0, N_TRIPLET))
         
         child_block = tri_df['ChildId'].values
         gift_block = tri_df['GiftId'].values
-        c_blocks = [perms[j*TRIPLET_BLOCK_SIZE: (j+1)*TRIPLET_BLOCK_SIZE] for j in range(8)]
         cids, gids = optimize_triplet_block(child_block, gift_block, gh=gh, ch=ch)
             
         tri_df['GiftId'] = gids
@@ -548,7 +546,7 @@ if __name__ == '__main__':
         print "PYTHON OPTIMIZATION..."
         picks = main_loop()
         checkCorrectNess(picks)
-        picks = optimize_3111(picks)
+        #picks = optimize_3111(picks)
         checkCorrectNess(picks)
         picks = optimize_211(picks)
         checkCorrectNess(picks)
