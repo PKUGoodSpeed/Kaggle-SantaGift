@@ -518,7 +518,7 @@ int main()
 			printf("Updated score: %lf TCH: %d TSH: %d\n", score, tch, tsh);
 		}
 
-		sprintf(buf, "subm_%.12f.csv", score);
+		sprintf(buf, "twtr.csv");
 		out = fopen(buf, "w");
 		fprintf(out, "ChildId,GiftId\n");
 		for (i = 0; i < 1000000; i++) {
