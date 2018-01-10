@@ -1,6 +1,6 @@
 #!/bin/bash
-for i in `seq 1 10`;
+for i in `seq 1 20`;
   do
     echo $i
-    ./app
+    ./apps/serial
   done

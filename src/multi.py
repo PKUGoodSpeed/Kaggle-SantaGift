@@ -30,7 +30,7 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 500
+SINGLE_BLOCK_SIZE = 660
 TRIPLET_BLOCK_SIZE = 250
 TWIN_BLOCK_SIZE = 400
 
@@ -432,7 +432,7 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(12):
+    for step in range(2):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         
@@ -459,7 +459,7 @@ def main_loop():
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
     pool = Pool(NUM_THREADS)
-    for step in range(10):
+    for step in range(20):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
         
@@ -484,7 +484,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     # triplet_idx = tri_df['GiftId'].values
-    for step in range(0):
+    for step in range(1):
         print "=================  Iteration #{0}  =================".format(str(step))
         
         child_block = tri_df['ChildId'].values
@@ -546,9 +546,11 @@ if __name__ == '__main__':
         print "PYTHON OPTIMIZATION..."
         picks = main_loop()
         checkCorrectNess(picks)
-        #picks = optimize_3111(picks)
+        picks = optimize_3111(picks)
         checkCorrectNess(picks)
         picks = optimize_211(picks)
+        checkCorrectNess(picks)
+        picks = optimize_321(picks)
         checkCorrectNess(picks)
         
         print "PYTHON OPTIMIZATION FINISHED"

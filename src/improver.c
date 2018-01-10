@@ -400,6 +400,7 @@ int main()
 	unsigned int checker_sum = 0;
 
 #ifdef _OPENMP
+	// omp_set_num_threads(16);
 	numthreads = omp_get_num_procs() - 1;
 #endif
 
