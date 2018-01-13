@@ -30,7 +30,7 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 660
+SINGLE_BLOCK_SIZE = 500
 TRIPLET_BLOCK_SIZE = 250
 TWIN_BLOCK_SIZE = 400
 
@@ -258,7 +258,7 @@ def optimize_3111(picks):
     print "SCORE BEFORE 3 = 1+1+1 OPTIMIZATION: ", score
     
     pool = Pool(NUM_THREADS)
-    for step in range(4):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         
         bsize = int(len(group_gift)/6)
@@ -313,10 +313,11 @@ def optimize_211(picks):
     print "SCORE BEFORE 2 = 1+1 OPTIMIZATION: ", score
     
     pool = Pool(NUM_THREADS)
-    for step in range(10):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         
         bsize = int(len(group_gift)/120)
+        np.random.seed(seed=1177)
         shuffle = np.random.permutation(range(0, len(group_gift)))
         c_blocks = [shuffle[j*bsize: (j+1)*bsize] for j in range(120)]
         args = [(child_block, group_gift[child_block], gh, ch, id_map) for child_block in c_blocks]
@@ -380,7 +381,7 @@ def optimize_321(picks):
     print "SCORE BEFORE 2 = 1+1 OPTIMIZATION: ", score
     
     pool = Pool(NUM_THREADS)
-    for step in range(4):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         
         bsize = int(len(group_gift)/6)
@@ -432,11 +433,11 @@ def main_loop():
     # Single Optimization:
     # number of iteration = 20
     single_idx = subm['GiftId'].values
-    for step in range(2):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
         
-        c_blocks = [perms[j*SINGLE_BLOCK_SIZE: (j+1)*SINGLE_BLOCK_SIZE] for j in range(720)]
+        c_blocks = [perms[j*SINGLE_BLOCK_SIZE: (j+1)*SINGLE_BLOCK_SIZE] for j in range(600)]
         args = [(child_block, single_idx[child_block], gh, ch) for child_block in c_blocks]
         pool = Pool(NUM_THREADS)
         rslts = pool.map(wrapper_single, args)
@@ -459,7 +460,8 @@ def main_loop():
     # number of iteration = 4
     twin_idx = twin_df['GiftId'].values
     pool = Pool(NUM_THREADS)
-    for step in range(20):
+    np.random.seed(seed=17)
+    for step in range(50):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
         
@@ -484,7 +486,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     # triplet_idx = tri_df['GiftId'].values
-    for step in range(1):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         
         child_block = tri_df['ChildId'].values

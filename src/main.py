@@ -98,7 +98,7 @@ def multi_transform(mtest):
 
 if __name__ == '__main__':
     for i in range(100):
-        test = pd.read_csv('./twtr.csv')
+        test = pd.read_csv('./111.csv')
         test2 = multi_transform(shuffle(test[45001:100000].copy(), random_state=2017))
         test = pd.concat([pd.DataFrame(test[:45001].values), pd.DataFrame(test2), pd.DataFrame(test[100000:].values)], axis=0, ignore_index=True).reset_index(drop=True).values
         test = pd.DataFrame(test)

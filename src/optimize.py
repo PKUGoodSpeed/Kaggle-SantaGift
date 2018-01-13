@@ -24,9 +24,9 @@ TRIPLETS = 5001
 TWINS = 45001
 N_TRIPLET = 1667
 N_TWIN = 20000
-SINGLE_BLOCK_SIZE = 500
+SINGLE_BLOCK_SIZE = 1000
 TRIPLET_BLOCK_SIZE = 555
-TWIN_BLOCK_SIZE = 400
+TWIN_BLOCK_SIZE = 1000
 
 ## Default data source path
 INITIAL_SUBMISSION = './twtr.csv'
@@ -417,8 +417,8 @@ def main_loop():
     for step in range(15):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(TWINS, N_CHILDREN))
-        pbar.setBar(400)
-        for j in range(400):
+        pbar.setBar(10, bar_size=10)
+        for j in range(10):
             pbar.show(j)
             child_block = perms[j*SINGLE_BLOCK_SIZE: (j+1)*SINGLE_BLOCK_SIZE]
             gift_block = single_idx[child_block]
@@ -440,8 +440,8 @@ def main_loop():
     for step in range(10):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TWIN))
-        pbar.setBar(50)
-        for j in range(50):
+        pbar.setBar(10, bar_size=10)
+        for j in range(10):
             pbar.show(j)
             child_block = perms[j*TWIN_BLOCK_SIZE: (j+1)*TWIN_BLOCK_SIZE]
             gift_block = twin_idx[child_block]
@@ -459,7 +459,7 @@ def main_loop():
     # Triplet Optimization:
     # number of iteration = 2
     triplet_idx = tri_df['GiftId'].values
-    for step in range(10):
+    for step in range(0):
         print "=================  Iteration #{0}  =================".format(str(step))
         perms = np.random.permutation(range(0, N_TRIPLET))
         for j in range(3):
@@ -519,12 +519,12 @@ if __name__ == '__main__':
         print "PYTHON OPTIMIZATION..."
         picks = main_loop()
         checkCorrectNess(picks)
-        picks = optimize_3111(picks)
-        checkCorrectNess(picks)
-        picks = optimize_211(picks)
-        checkCorrectNess(picks)
-        picks = optimize_321(picks)
-        checkCorrectNess(picks)
+        #picks = optimize_3111(picks)
+        #checkCorrectNess(picks)
+        #picks = optimize_211(picks)
+        #checkCorrectNess(picks)
+        #picks = optimize_321(picks)
+        #checkCorrectNess(picks)
         
         print "PYTHON OPTIMIZATION FINISHED"
         
