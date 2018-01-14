@@ -1,8 +1,8 @@
 # README
-**Website:**
+### Website:
 https://www.kaggle.com/c/santa-gift-matching#description
 
-**Description:**
+### Description:
 ‘Tis the night before Christmas 
 year: two thousand seventeen.
 Santa’s grown grouchy, 
@@ -20,10 +20,10 @@ he became a believer in the magic of...machine learning.
 So, Santa’s team needs YOU more than ever this year, 
 to solve this painful problem and save Christmas cheer.
 
-**The Challenge:**
+### The Challenge:
 In this playground competition, you’re challenged to build a toy matching algorithm that maximizes happiness by pairing kids with toys they want. In the dataset, each kid has 10 preferences for their gift (from 1000) and Santa has 1000 preferred kids for every gift available. What makes this extra difficult is that 0.4% of the kids are twins, and by their parents’ request, require the same gift.
 
-**Evaluation:**
+### Evaluation:
 Your goal is to maximize the 
 
     Average Normalized Happiness (ANH) = (AverageNormalizedChildHappiness (ANCH) ) ^ 3 + (AverageNormalizedSantaHappiness (ANSH) ) ^ 3
@@ -53,7 +53,7 @@ For example, if a child has a preference of gifts `[5,2,3,1,4]`, and is given gi
 If this child is given gift 4, then `ChildHappiness = [5-4] * 2 = 2`
 Code sample of `Average Normalized Happiness` can be seen from this [Kernel](https://www.kaggle.com/wendykan/average-normalized-happiness-demo). 
 
-**Submission File:**
+### Submission File:
 For each child in the dataset, you will match it with a gift. Remember, the first 0.5% of rows (`ChildId` 0 to 5000) are triplets, and the following 4% (`ChildId` 5001-45000) are twins. 
 
     ChildId,GiftId
@@ -67,10 +67,10 @@ For each child in the dataset, you will match it with a gift. Remember, the firs
     7,689
     8,689
 
-**Src Codes in github:**
-[naive_simulated_annealing.cpp](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/naive_simulated_annealing.cpp): using naive simulated annealing (swap based)
-[twtr_simulated_annealing.cpp](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/twtr_simulated_annealing.cpp): using simulated annealing to deal with twins and triplets
-[lsa_optimizer.py](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/lsa_optimizer.py): using scipy.linear_sum_assignment
-[multi_thread_lsa.py](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/multi_thread_lsa.py): using scipy.linear_sum_assignment with multithreading.Pool
-[optimizer_using_openmp.c](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/optimizer_using_openmp.c): heuristic optimizer by ZFTurbo
+### Src Codes in github:
+1. [naive_simulated_annealing.cpp](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/naive_simulated_annealing.cpp): using naive simulated annealing (swap based)
+2. [twtr_simulated_annealing.cpp](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/twtr_simulated_annealing.cpp): using simulated annealing to deal with twins and triplets
+3. [lsa_optimizer.py](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/lsa_optimizer.py): using scipy.linear_sum_assignment
+4. [multi_thread_lsa.py](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/multi_thread_lsa.py): using scipy.linear_sum_assignment with multithreading.Pool
+5. [optimizer_using_openmp.c](https://github.com/PKUGoodSpeed/Kaggle-SantaGift/blob/master/src/optimizer_using_openmp.c): heuristic optimizer by ZFTurbo
 
