@@ -1,4 +1,4 @@
-all: naive_sa_optimizer twtr_sa_optimizer omp_optimizer seriail_optimizer
+all: naive_sa_optimizer twtr_sa_optimizer omp_optimizer serial_optimizer
 
 naive_sa_optimizer: naive_simulated_annealing.cpp
 	g++ -std=c++11 -Wall -O3 naive_simulated_annealing.cpp -o apps/naive_sa_optimizer
