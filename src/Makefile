@@ -1,16 +1,16 @@
-all: santa twtr omp serial
+all: naive_sa_optimizer twtr_sa_optimizer omp_optimizer seriail_optimizer
 
-santa: santa.cpp
-	g++ -std=c++11 -Wall -O3 santa.cpp -o apps/app
+naive_sa_optimizer: naive_simulated_annealing.cpp
+	g++ -std=c++11 -Wall -O3 naive_simulated_annealing.cpp -o apps/naive_sa_optimizer
 	
-twtr: twtr.cpp
-	g++ -std=c++11 -Wall -O3 twtr.cpp -o apps/twtr
+twtr_sa_optimizer: twtr_simulated_annealing.cpp
+	g++ -std=c++11 -Wall -O3 twtr_simulated_annealing.cpp -o apps/twtr_sa_optimizer
 
-omp: improver.c
-	g++ -O3 -fopenmp -lpthread improver.c -o apps/omp
+omp: optimizer_using_openmp.c
+	g++ -O3 -fopenmp -lpthread optimizer_using_openmp.c -o apps/omp_optimizer
 
-serial: improver.c
-	g++ -O3 improver.c -o apps/serial
+serial: optimizer_using_openmp.c 
+	g++ -O3 optimizer_using_openmp.c -o apps/serial_optimizer
 	
 clean:
 	rm apps/*
